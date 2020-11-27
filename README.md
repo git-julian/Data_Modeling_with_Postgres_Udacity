@@ -71,8 +71,6 @@ The database schema holds the following tabels:
 In order to run this program a python 3.7 installation is needed. Furthermore one must have accesss to a PostgreSQL database.
 In order to connect the pythn environment with the PostgreSQL database the *psycopg2* package needs to be installed. 
 
-
-## 6. 
     
 
 
