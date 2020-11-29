@@ -15,8 +15,8 @@ songplay_table_create = ("""
     start_time TIMESTAMP NOT NULL,
     user_id INT NOT NULL,
     level VARCHAR NOT NULL,
-    song_id VARCHAR(18),
-    artist_id VARCHAR(18),
+    song_id VARCHAR,
+    artist_id VARCHAR,
     session_id INT NOT NULL,
     location VARCHAR NOT NULL,
     user_agent VARCHAR NOT NULL
