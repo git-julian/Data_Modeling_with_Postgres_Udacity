@@ -79,8 +79,6 @@ def process_log_file(cur, filepath):
         
         if results:
             songid, artistid = results
-            print(row.song, row.artist, row.length)
-            # print("index ist: "+ index)
             
         else:
             songid, artistid = None, None
