@@ -6,23 +6,28 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
-    
-    '''
-    Reads in JSON Files wich contain data from the songs, selects the wated files for the defined database shema for the tabels song and artist and writes them into the database.
-    
-    Input:
-        cur: Cuser Object that connects to the given database
-        filepath: A String that gives the filepath to the location of the JSON files
-    '''
-    # open song file
-    df = pd.read_json(filepath, lines=True) 
-    # insert song record
-    song_data = df[["song_id", "title", "artist_id", "year", "duration"]].values[0].tolist()
-    cur.execute(song_table_insert, song_data)
-    
-    # insert artist record
-    artist_data = df[['artist_id', 'artist_name', 'artist_location', 'artist_latitude', 'artist_longitude']].values[0].tolist()
-    cur.execute(artist_table_insert, artist_data)
+
+        '''
+        Reads in JSON Files wich contain data from the songs, selects the wated files for the defined database shema for the tabels song and artist and writes them into the database.
+ m 
+        Input:
+            cur: Cuser Object that connects to the given database
+            filepath: A String that gives the filepath to the location of the JSON files
+        '''
+        
+        # open song file
+        df = pd.read_json(filepath, lines=True) 
+        #df['duration_rnd'] = int(df['duration'])
+
+        # insert artist record
+        artist_data = df[['artist_id', 'artist_name', 'artist_location', 'artist_latitude', 'artist_longitude']].values[0].tolist()
+        cur.execute(artist_table_insert, artist_data)
+        
+        # insert song record
+        song_data = df[["song_id", "title", "artist_id", "year", "duration"]].values[0].tolist()
+        cur.execute(song_table_insert, song_data)
+
+
 
 
 def process_log_file(cur, filepath):
@@ -46,6 +51,7 @@ def process_log_file(cur, filepath):
 
     # convert timestamp column to datetime
     t = pd.to_datetime(df['ts'], unit = 'ms')
+    df['ts'] = pd.to_datetime(df['ts'], unit = 'ms')
     
     # insert time data records
     time_data = (t,t.dt.hour, t.dt.day, t.dt.dayofweek, t.dt.month, t.dt.year, t.dt.weekday)
@@ -57,10 +63,12 @@ def process_log_file(cur, filepath):
 
     # load user table
     user_df = df[['userId','firstName','lastName','gender','level']]
-
+    
     # insert user records
     for i, row in user_df.iterrows():
         cur.execute(user_table_insert, row)
+        
+        
 
     # insert songplay records
     for index, row in df.iterrows():
@@ -71,11 +79,14 @@ def process_log_file(cur, filepath):
         
         if results:
             songid, artistid = results
+            print(row.song, row.artist, row.length)
+            # print("index ist: "+ index)
+            
         else:
             songid, artistid = None, None
 
         # insert songplay record
-        songplay_data = (index, pd.to_datetime(row.ts , unit = 'ms'), int(row.userId), row.level, songid, artistid, row.sessionId , row.location, row.userAgent)
+        songplay_data = (row.ts,row.userId, row.level, songid, artistid,row.sessionId,row.location, row.userAgent)
         cur.execute(songplay_table_insert, songplay_data)
 
 
